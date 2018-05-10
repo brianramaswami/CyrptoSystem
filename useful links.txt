@@ -1,3 +1,5 @@
 https://www.youtube.com/watch?v=3giNelTfeAk
 https://brilliant.org/wiki/merkle-tree/
 http://people.cs.vt.edu/danfeng/courses/cs6204/sp10-lectures/merkle.ppt
+
+https://github.com/evankozliner/merkle-tree/blob/master/MerkleTree.py
