@@ -21,96 +21,30 @@ def createTree():
 	root = createInner(inner1, inner2)
 	return root
 
-def divideIntoAscii(string):
-	values = []
-	for i in range(len(string)/8):
-		values.append(string[i*8:(i+1)*8])
-	return values
-
-def combineIntoAscii(list):
-	values = []
-	for i in range(len(list)/8):
-		asciiStr = ""
-		for j in range(8):
-			asciiStr = asciiStr + list[(i * 8) + j]
-		values.append(asciiStr)
-	return values
-
-def getLeft(list):
-	half = len(list)/2
-	leftNode = list[:half]
-	return leftNode
-
-def getRight(list):
-	half = len(list)/2
-	rightNode = list[half:]
-	return rightNode
-
-def binListToAscii(list):
-	asciiList = []
-	for val in list:
-		asciiList.append(chr(ascii_integer(val)))
-	return asciiList
-
-def fileInTree(fileName, root):
-	fileList = divideIntoAscii(root)
-	fullList = combineIntoAscii(binListToAscii(fileList))
-
-	leftList = getLeft(fullList)
-	rightList = getRight(fullList)
-	leftFullList = combineIntoAscii(binListToAscii(leftList))
-	rightFullList = combineIntoAscii(binListToAscii(rightList))
-	
-	leftLeftList = combineIntoAscii(binListToAscii(getLeft(leftFullList)))
-	rightLeftList = combineIntoAscii(binListToAscii(getRight(leftFullList)))
-	leftRightList = combineIntoAscii(binListToAscii(getLeft(rightFullList)))
-	rightRightList = combineIntoAscii(binListToAscii(getRight(rightFullList)))
-
-	leftLeftHash = combineIntoAscii(binListToAscii(leftLeftList))[0]
-	rightLeftHash = combineIntoAscii(binListToAscii(rightLeftList))[0]
-	leftRightHash = combineIntoAscii(binListToAscii(leftRightList))[0]
-	rightRightHash = combineIntoAscii(binListToAscii(rightRightList))[0]
-
-	leftLeftFile = chr(ascii_integer(leftLeftHash))
-	rightLeftFile = chr(ascii_integer(rightLeftHash))
-	leftRightFile = chr(ascii_integer(leftRightHash))
-	rightRightFile = chr(ascii_integer(rightRightHash))
-
+def isFileInTree(fileName):
 	position = "0"
-	if (fileName == leftLeftFile):
+	sibling = ""
+	otherSubTree = ""
+	if (fileName == "1"):
 		position = "1"
-		print "File " + fileName + " is in position " + position
-		print "Hash of file in position 2: "
-		print rightLeftHash
-		print "Hash of right subtree: " 
-		print ''.join(rightFullList)
-		return position, rightLeftHash, rightFullList
-	elif (fileName == rightLeftFile):
+		sibling = createLeaf("2")
+		otherSubTree = createInner(createLeaf("3"), createLeaf("4"))
+	elif (fileName == "2"):
 		position = "2"
-		print "File " + fileName + " is in position " + position
-		print "Hash of file in position 1: "
-		print leftLeftHash
-		print "Hash of right subtree: " 
-		print ''.join(rightFullList)
-		return position, leftLeftHash, rightFullList
-	elif (fileName == leftRightFile):
+		sibling = createLeaf("1")
+		otherSubTree = createInner(createLeaf("3"), createLeaf("4"))
+	elif (fileName == "3"):
 		position = "3"
-		print "File " + fileName + " is in position " + position
-		print "Hash of file in position 4: "
-		print rightRightHash
-		print "Hash of right subtree: " 
-		print ''.join(leftFullList)
-		return position, rightRightHash, leftFullList
-	elif (fileName == rightRightFile):
+		sibling = createLeaf("4")
+		otherSubTree = createInner(createLeaf("1"), createLeaf("2"))
+	elif (fileName == "4"):
 		position = "4"
-		print "File " + fileName + " is in position " + position
-		print "Hash of file in position 3: "
-		print leftRightHash
-		print "Hash of right subtree: " 
-		print ''.join(leftFullList)
-		return position, leftRightHash, leftFullList
+		sibling = createLeaf("3")
+		otherSubTree = createInner(createLeaf("1"), createLeaf("2"))
 	else:
-		print fileName + " is not in the file"
+		print "That file is not in the tree"
+	root = createInner(createInner(createLeaf("1"), createLeaf("2")), createInner(createLeaf("3"), createLeaf("4")))
+	return position, sibling, otherSubTree, root
 
 def actuallyInTree(fileName, position, sibling, otherSubtree, root):
 	if (position == "1"):
@@ -133,3 +67,5 @@ def actuallyInTree(fileName, position, sibling, otherSubtree, root):
 		if (root == checkRoot):
 			return True
 		return False
+		
+	
