@@ -1,0 +1,135 @@
+from sage.crypto.util import ascii_integer
+
+def myHash (fileName):
+	return BinaryStrings().encoding(fileName)
+
+def createLeaf(fileData):
+	return myHash(fileData)
+
+def createInner(leftData, rightData):
+	leftHash = myHash(str(leftData))
+	rightHash = myHash(str(rightData))
+	return myHash(str(leftHash) + str(rightHash))
+
+def createTree():
+	leaf1 = createLeaf("1")
+	leaf2 = createLeaf("2")
+	leaf3 = createLeaf("3")
+	leaf4 = createLeaf("4")
+	inner1 = createInner(leaf1, leaf2)
+	inner2 = createInner(leaf3, leaf4)
+	root = createInner(inner1, inner2)
+	return root
+
+def divideIntoAscii(string):
+	values = []
+	for i in range(len(string)/8):
+		values.append(string[i*8:(i+1)*8])
+	return values
+
+def combineIntoAscii(list):
+	values = []
+	for i in range(len(list)/8):
+		asciiStr = ""
+		for j in range(8):
+			asciiStr = asciiStr + list[(i * 8) + j]
+		values.append(asciiStr)
+	return values
+
+def getLeft(list):
+	half = len(list)/2
+	leftNode = list[:half]
+	return leftNode
+
+def getRight(list):
+	half = len(list)/2
+	rightNode = list[half:]
+	return rightNode
+
+def binListToAscii(list):
+	asciiList = []
+	for val in list:
+		asciiList.append(chr(ascii_integer(val)))
+	return asciiList
+
+def fileInTree(fileName, root):
+	fileList = divideIntoAscii(root)
+	fullList = combineIntoAscii(binListToAscii(fileList))
+
+	leftList = getLeft(fullList)
+	rightList = getRight(fullList)
+	leftFullList = combineIntoAscii(binListToAscii(leftList))
+	rightFullList = combineIntoAscii(binListToAscii(rightList))
+	
+	leftLeftList = combineIntoAscii(binListToAscii(getLeft(leftFullList)))
+	rightLeftList = combineIntoAscii(binListToAscii(getRight(leftFullList)))
+	leftRightList = combineIntoAscii(binListToAscii(getLeft(rightFullList)))
+	rightRightList = combineIntoAscii(binListToAscii(getRight(rightFullList)))
+
+	leftLeftHash = combineIntoAscii(binListToAscii(leftLeftList))[0]
+	rightLeftHash = combineIntoAscii(binListToAscii(rightLeftList))[0]
+	leftRightHash = combineIntoAscii(binListToAscii(leftRightList))[0]
+	rightRightHash = combineIntoAscii(binListToAscii(rightRightList))[0]
+
+	leftLeftFile = chr(ascii_integer(leftLeftHash))
+	rightLeftFile = chr(ascii_integer(rightLeftHash))
+	leftRightFile = chr(ascii_integer(leftRightHash))
+	rightRightFile = chr(ascii_integer(rightRightHash))
+
+	position = "0"
+	if (fileName == leftLeftFile):
+		position = "1"
+		print "File " + fileName + " is in position " + position
+		print "Hash of file in position 2: "
+		print rightLeftHash
+		print "Hash of right subtree: " 
+		print ''.join(rightFullList)
+		return position, rightLeftHash, rightFullList
+	elif (fileName == rightLeftFile):
+		position = "2"
+		print "File " + fileName + " is in position " + position
+		print "Hash of file in position 1: "
+		print leftLeftHash
+		print "Hash of right subtree: " 
+		print ''.join(rightFullList)
+		return position, leftLeftHash, rightFullList
+	elif (fileName == leftRightFile):
+		position = "3"
+		print "File " + fileName + " is in position " + position
+		print "Hash of file in position 4: "
+		print rightRightHash
+		print "Hash of right subtree: " 
+		print ''.join(leftFullList)
+		return position, rightRightHash, leftFullList
+	elif (fileName == rightRightFile):
+		position = "4"
+		print "File " + fileName + " is in position " + position
+		print "Hash of file in position 3: "
+		print leftRightHash
+		print "Hash of right subtree: " 
+		print ''.join(leftFullList)
+		return position, leftRightHash, leftFullList
+	else:
+		print fileName + " is not in the file"
+
+def actuallyInTree(fileName, position, sibling, otherSubtree, root):
+	if (position == "1"):
+		checkRoot = createInner(createInner(createLeaf(fileName), sibling), otherSubTree)
+		if (root == checkRoot):
+			return True
+		return False
+	elif (position == "2"):
+		checkRoot = createInner(createInner(sibling, createLeaf(fileName)), otherSubTree)
+		if (root == checkRoot):
+			return True
+		return False
+	elif (position == "3"):
+		checkRoot = createInner(otherSubTree, createInner(createLeaf(fileName), sibling))
+		if (root == checkRoot):
+			return True
+		return False
+	else:
+		checkRoot = createInner(otherSubTree, createInner(sibling, createLeaf(fileName)))
+		if (root == checkRoot):
+			return True
+		return False
