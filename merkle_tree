@@ -21,6 +21,13 @@ def createTree():
 	root = createInner(inner1, inner2)
 	return root
 
+# Checks if file with fileName is in tree. If so, returns the position of the file,
+# the hash of the sibling node, the hash of the other subtree, and the root node. If not,
+# prints to screen and returns useless values
+# (simulates the user asking the administrator if the file is in the system)
+# Input: name of file to check if it's in the system
+# Output: position of given file, hash of the sibling file, hash of the other subtree,
+#  the root
 def isFileInTree(fileName):
 	position = "0"
 	sibling = ""
@@ -46,26 +53,21 @@ def isFileInTree(fileName):
 	root = createInner(createInner(createLeaf("1"), createLeaf("2")), createInner(createLeaf("3"), createLeaf("4")))
 	return position, sibling, otherSubTree, root
 
+# Given the fileName, position of the file, the hash of the sibling node, the hash of the
+# other subtree, and the root node, builds a second "root" and compares it with the given
+# root value. If they match, it returns True, else False
+# (Simulating the user checking to make sure the information given is accurate)
+# input: name of file, the four values output by the isFileInTree function (in order)
+# output: True if roots match, False otherwise
 def actuallyInTree(fileName, position, sibling, otherSubtree, root):
 	if (position == "1"):
 		checkRoot = createInner(createInner(createLeaf(fileName), sibling), otherSubTree)
-		if (root == checkRoot):
-			return True
-		return False
 	elif (position == "2"):
 		checkRoot = createInner(createInner(sibling, createLeaf(fileName)), otherSubTree)
-		if (root == checkRoot):
-			return True
-		return False
 	elif (position == "3"):
 		checkRoot = createInner(otherSubTree, createInner(createLeaf(fileName), sibling))
-		if (root == checkRoot):
-			return True
-		return False
 	else:
 		checkRoot = createInner(otherSubTree, createInner(sibling, createLeaf(fileName)))
-		if (root == checkRoot):
-			return True
-		return False
-		
-	
+	if (root == checkRoot):
+		return True
+	return False
